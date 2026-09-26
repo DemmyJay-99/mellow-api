@@ -1,0 +1,10 @@
+import { z } from "zod";
+
+export const pluginSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().min(1),
+  author: z.string().min(1),
+  gist_url: z.string().url(),
+});
+
+export type AddPluginBody = z.infer<typeof pluginSchema> 
