@@ -8,4 +8,8 @@ export const pluginSchema = z.object({
   // like_count: z.number().int().nonnegative()
 });
 
-export type AddPluginBody = z.infer<typeof pluginSchema> 
+export const statusSchema = z.object({
+  status: z.enum(["approved", "rejected"]),
+});
+
+export type AddPluginBody = z.infer<typeof pluginSchema>;

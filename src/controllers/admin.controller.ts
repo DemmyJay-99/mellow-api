@@ -1,5 +1,5 @@
 import type { Response, Request } from "express";
-import { pluginSchema } from "../schemas/plugin.schema.js";
+import { pluginSchema, statusSchema } from "../schemas/plugin.schema.js";
 import db from "../db/supabase.js";
 
 export const getPlugins = async (req: Request, res: Response) => {
@@ -60,35 +60,40 @@ type PluginParams = {
   id: string;
 };
 
-export const approvePlugin = async (req: Request<PluginParams>, res: Response) => {
+export const updatePluginStatus = async (req: Request<PluginParams>, res: Response) => {
   const { id } = req.params;
-  const { data: plugin, error:fetchError } = await db.from("plugins").select("id, status").eq("id", id).single();
+  const result = statusSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({
+      error: "Invalid request body",
+    });
+  }
+  const { status } = result.data;
+  if (!["approved", "rejected"].includes(status)) {
+    return res.status(400).json({
+      error: "Invalid status",
+    });
+  }
+  const { data: plugin, error: fetchError } = await db.from("plugins").select("id, status").eq("id", id).single();
 
   if (fetchError || !plugin) {
     return res.status(404).json({ error: "Plugin not found" });
   }
-
-  if (plugin.status === "approved") {
-    return res.status(409).json({
-      error: "Plugin is already approved",
-    });
-  }
-    const { data, error:updateError } = await db.from("plugins").update({ status: "approved" }).eq("id", id).eq("status", "pending").select().single();
-    if (updateError) {
-      return res.status(500).json({
-        error: updateError.message,
-      });
-    }
-    return res.json(data);
-};
-
-export const rejectPlugin = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { data, error } = await db.from("plugins").update({ status: "rejected" }).eq("id", id).select();
-  if (error) {
+  const { data, error: updateError } = await db
+    .from("plugins")
+    .update({ status })
+    .eq("id", id)
+    .eq("status", "pending")
+    .select()
+    .single();
+  if (updateError) {
     return res.status(500).json({
-      error: error.message,
+      error: updateError.message,
     });
   }
   return res.json(data);
 };
+
+// export const deletePlugin = async (req: Request, res: Response) {
+
+// }
