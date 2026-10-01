@@ -5,6 +5,7 @@ export const pluginSchema = z.object({
   description: z.string().min(1),
   author: z.string().min(1),
   gist_url: z.string().url(),
+  // like_count: z.number().int().nonnegative()
 });
 
 export type AddPluginBody = z.infer<typeof pluginSchema> 

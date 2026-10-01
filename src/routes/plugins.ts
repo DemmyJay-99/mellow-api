@@ -1,9 +1,8 @@
 import { Router } from "express";
 import { getPlugins, addPlugin } from "../controllers/plugin.controller.js";
 
-const router = Router();
-
-router.get("/api/plugins", getPlugins)
-router.post("/api/plugins", addPlugin)
+export const router = Router();
+router.get("/plugins", getPlugins)
+router.post("/plugins", addPlugin)
 
 export default router

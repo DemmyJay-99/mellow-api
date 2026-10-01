@@ -1,9 +1,9 @@
-import { Response, Request } from "express";
+import type { Response, Request } from "express";
 import { pluginSchema } from "../schemas/plugin.schema.js";
 import db from "../db/supabase.js";
 
 export const getPlugins = async (req: Request, res: Response) => {
-  const { data, error } = await db.from("plugins").select("*");
+  const { data, error } = await db.from("plugins").select("*").eq("status", "approved");
   if (error) {
     return res.status(500).json({
       error: error.message,
@@ -21,7 +21,6 @@ export const addPlugin = async (req: Request, res: Response) => {
   }
   const plugin = {
     ...result.data,
-    status: "pending",
   };
   if (!plugin) {
     return res.status(500).json({
