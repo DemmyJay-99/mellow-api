@@ -62,13 +62,24 @@ type PluginParams = {
 
 export const approvePlugin = async (req: Request<PluginParams>, res: Response) => {
   const { id } = req.params;
-  const { data, error } = await db.from("plugins").update({ status: "approved" }).eq("id", id).select();
-  if (error) {
-    return res.status(500).json({
-      error: error.message,
+  const { data: plugin, error:fetchError } = await db.from("plugins").select("id, status").eq("id", id).single();
+
+  if (fetchError || !plugin) {
+    return res.status(404).json({ error: "Plugin not found" });
+  }
+
+  if (plugin.status === "approved") {
+    return res.status(409).json({
+      error: "Plugin is already approved",
     });
   }
-  return res.json(data);
+    const { data, error:updateError } = await db.from("plugins").update({ status: "approved" }).eq("id", id).eq("status", "pending").select().single();
+    if (updateError) {
+      return res.status(500).json({
+        error: updateError.message,
+      });
+    }
+    return res.json(data);
 };
 
 export const rejectPlugin = async (req: Request, res: Response) => {
