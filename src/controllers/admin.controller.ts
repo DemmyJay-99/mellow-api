@@ -94,6 +94,19 @@ export const updatePluginStatus = async (req: Request<PluginParams>, res: Respon
   return res.json(data);
 };
 
-// export const deletePlugin = async (req: Request, res: Response) {
+export const deletePlugin = async (req: Request<PluginParams>, res: Response) => {
+  const { id } = req.params;
+  const { data, error } = await db.from("plugins").delete().eq("id", id).select().single();
+  if (error) {
+    if (error.code === "PGRST116") {
+      return res.status(404).json({
+        error: "Plugin not found",
+      });
+    }
 
-// }
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+  return res.json(data);
+};
