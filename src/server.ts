@@ -10,7 +10,7 @@ const PORT: number = Number(process.env.PORT) || 8000;
 app.use(cors());
 app.use(express.json());
 app.use("/api", router);
-app.use("/api/admin", adminRouter)
+app.use("/api/admin", adminRouter);
 
 app.listen(PORT, () => {
   console.log(`Port running on ${PORT}`);

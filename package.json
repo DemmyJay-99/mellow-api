@@ -8,7 +8,8 @@
   "main": "/src/server.ts",
   "scripts": {
     "start": "bun run /src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write ."
   },
   "private": true,
   "devDependencies": {
@@ -24,6 +25,7 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.4",
     "express": "^5.2.1",
+    "prettier": "^3.9.9",
     "zod": "^4.6.5"
   }
 }

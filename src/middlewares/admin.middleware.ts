@@ -4,7 +4,7 @@ import supabase from "../db/supabase.js";
 export const requireAdmin = async (req: Request, res: Response, next: NextFunction) => {
   const auth = req.headers.authorization;
   if (!auth?.startsWith("Bearer ")) {
-    console.log("No")
+    console.log("No");
     return res.status(401).json({
       error: "Authentication required",
     });
@@ -22,7 +22,7 @@ export const requireAdmin = async (req: Request, res: Response, next: NextFuncti
   }
 
   if (user.email !== process.env.ADMIN_EMAIL) {
-    console.log(user.email)
+    console.log(user.email);
     return res.status(403).json({
       error: "Forbidden",
     });
